@@ -1,0 +1,38 @@
+version: '2'
+services:
+  phpapp:
+    build: ./docker/php
+    image: 'php72fpm-ci'
+    ports:
+      - '8810:80'
+    volumes:
+      - '.:/var/www/html'
+    depends_on:
+      - db
+    links:
+      - db:db
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_DATABASE=corus_com
+      - MYSQL_USER=corus_com
+      - MYSQL_PASSWORD=corus_com
+  db:
+    image: 'mysql:5.6'
+    volumes:
+      - './application/config:/config'
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysqlroot
+      - MYSQL_DATABASE=corus_com
+      - MYSQL_USER=corus_com
+      - MYSQL_PASSWORD=corus_com
+  myadmin:
+     image: "phpmyadmin/phpmyadmin"
+     ports:
+       - 8302:80
+     links:
+       - db:db
+     environment:
+       - PMA_HOST=db
+       - PMA_USER=root
+       - PMA_PASSWORD=mysqlroot
+       - PMA_ARBITRARY=1
